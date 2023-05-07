@@ -9,7 +9,7 @@
 
 # Use-case Explanation
 
-![](Images/Tongue_02_3212.jpg)
+![](Images/Tongue_03_3212.jpg)
 
 # Components and Hardware Configuration
 
