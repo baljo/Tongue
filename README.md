@@ -3,7 +3,7 @@
 # Introduction
 
   
-![](images/Tongue_inferencing.gif)
+![](Images/Tongue_inferencing.gif)
 
 
 
