@@ -2,7 +2,12 @@
 
 # Introduction
 
-![]()
+![](Images\Tongue_02_3212.jpg)
+
+# Use-case Explanation
+
+# Components and Hardware Configuration
+
 
 # Intro / Overview
 Briefly provide an introduction to your project. Address the following: what you are accomplishing, what the intended outcome is, highlight the use-case, describe the reasons for undertaking this project, and give a high level overview of the build. Provide a sentence or two for each of these aspects.  
