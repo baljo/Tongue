@@ -40,7 +40,8 @@ Here we will go deeper into the problem that is being addressed.  We’ll want t
 `#define turbidity_Pin A4`). If not using Grove ports or the battery chassis, you can use the 40-Pin GPIO Header at the back.
 - Double-check the connections
 
-![](Images/img_3181_resized.jpg)
+![](Images/IMG_3181_resized.jpg)
+
 
 ![](Images/WIO_Analog_ports.jpg)
 
