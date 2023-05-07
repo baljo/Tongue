@@ -15,16 +15,11 @@
  */
 
 /* Includes ---------------------------------------------------------------- */
-//#include <Nesteet_inferencing.h>
 #include <Tongue_inferencing.h>
-
-//#include "LIS3DHTR.h"          //include the accelerator library
 #include <SparkFunBQ27441.h>   // to read battery info
 #include "seeed_line_chart.h"  //include the line chart library
-#include "Histogram.h"
 #include "TFT_eSPI.h"
 
-TFT_Histogram histogram = TFT_Histogram();  //Initializing Histogram
 TFT_eSPI tft;
 
 
@@ -107,25 +102,12 @@ void setup() {
   ;
   Serial.println("Edge Impulse Inferencing Demo");
 
-  // put your setup code here, to run once:
-  //Serial.begin(9600);
-
-  //tft.init();
-
-  /*
-  histogram.initHistogram(&tft);
-  histogram.formHistogram("a", 1, 50.55, 40, TFT_RED);  //Column 1
-  histogram.formHistogram("b", 2, 20, 40, TFT_BLACK);   //Column 2
-  histogram.showHistogram();                            //show histogram
-*/
   tft.begin();
   tft.setRotation(3);
   spr.createSprite(TFT_HEIGHT, TFT_WIDTH);
   spr.setRotation(3);
 
-
   setupBQ27441();
-  //Serial.begin(115200);
 }
 
 
@@ -149,6 +131,7 @@ void loop() {
   if (millis() > last_interval_ms + INTERVAL_MS) {
     last_interval_ms = millis();
 
+    // by keeping the following rows you can use this program to both acquire data as well as for inferencing!
     Serial.print(tdsValue);
     Serial.print(",");
     Serial.println(turb_voltage);  // print out the value you read:
@@ -156,11 +139,11 @@ void loop() {
     if (i >= 19)
       i = 0;
 
+    // filling the features array 
     features[i] = tdsValue;
     features[i + 1] = turb_voltage;
 
     i = i + 2;
-    //draw_histogram(turb_voltage, soc, current);
   }
 
 
@@ -185,8 +168,9 @@ void loop() {
     return;
   }
 
+  // below loop finds the maximum prediction score and uses that as the final prediction
+  // you might also want to add a check for uncertainty if the highest score is e.g. < 60 %  
   float max = -1.0;
-
   for (uint16_t i = 0; i < EI_CLASSIFIER_LABEL_COUNT; i++) {
     if (result.classification[i].value > max) {
       max = result.classification[i].value;
@@ -210,14 +194,6 @@ void loop() {
 
   draw_chart(turb_voltage, soc, current, max);
 
-  //delay(200);
-}
-
-
-void draw_histogram(float turb_voltage, unsigned int soc, int current, float max) {
-
-
-  //  histogram.changeParam(1, "F", 55, TFT_RED);  //change column 6
 }
 
 
