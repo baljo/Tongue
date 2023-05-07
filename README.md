@@ -40,6 +40,10 @@ Here we will go deeper into the problem that is being addressed.  We’ll want t
 `#define turbidity_Pin A4`). If not using Grove ports or the battery chassis, you can use the 40-Pin GPIO Header at the back.
 - Double-check the connections
 
+![](Images/img_3181_resized.jpg)
+
+![](Images/WIO_Analog_ports.jpg)
+
 ### 3D-printing the Tongue and the PCB Case
 - The different STL-files are found at the [GitHub repository](https://github.com/baljo/Tongue/tree/main/3D%20Model/STL-files)
     - [PCB case](https://github.com/baljo/Tongue/blob/main/3D%20Model/STL-files/PCB%20case.stl)
@@ -50,7 +54,7 @@ Here we will go deeper into the problem that is being addressed.  We’ll want t
 - No support is needed, a brim or raft is though recommended. TPU-filament sticks better to the print bed than PLA, so a heated bed is probably not necessary, my printer is anyhow not having one.
 - The "tongue" is split in two parts, the bottom part is not strictly needed, but provides some protection when the equipment is not in use.
 
-![](Images/img_3181_resized.jpg)
+
 
 ![](Images/IMG_3242_resized.jpg)
 
