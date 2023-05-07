@@ -2,7 +2,7 @@
 
 # Introduction
 
-![](Images\Tongue_02_3212.jpg)
+![](Images/Tongue_02_3212.jpg)
 
 # Use-case Explanation
 
