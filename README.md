@@ -50,11 +50,11 @@ Here we will go deeper into the problem that is being addressed.  We’ll want t
 - No support is needed, a brim or raft is though recommended. TPU-filament sticks better to the print bed than PLA, so a heated bed is probably not necessary, my printer is anyhow not having one.
 - The "tongue" is split in two parts, the bottom part is not strictly needed, but provides some protection when the equipment is not in use.
 
-![](images/img_3181_resized.jpg)
+![](Images/img_3181_resized.jpg)
 
-![](images/IMG_3242_resized.jpg)
+![](Images/IMG_3242_resized.jpg)
 
-![](images/Tongue_3D_rendering.png)
+![](Images/Tongue_3D_rendering.png)
 
 ### Attributions
 The tongue is an adaption from this [3D-file](https://www.thingiverse.com/thing:644879) found at Thingiverse. All 3D-files I've created are licensed similarly as the original creator's (Attribution-ShareAlike 3.0 Unported/CC BY-SA 3.0).
