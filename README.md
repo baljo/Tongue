@@ -143,7 +143,7 @@ After collecting some data you are now ready to build and train a ML model:
 - Select `Classifier` from the menu
 - Change the settings as in the picture, most important changes are the Dense layers and the Dropout rate, but feel free to play around with other settings.
 - The unoptimized float32 model will with these settings be very tiny, so there's no need to profile an quantized int8 model.
-    - In my case the int8 accuracy has actually been extremely poor and useless, I haven't though investigated why as the float32 model works just fine.
+    - In my case the int8 accuracy has actually been extremely poor and useless, I haven't though investigated why, as the float32 model works just fine.
 - Click on `Start training`, unless you have lots of data and/or a very huge neural network, the training will in this case take just a few minutes.
 - Depending on your data quality/quantity and your model settings, you might or might not achieve a satisfying accuracy.
     - If you get a very poor accuracy with the unoptimized float32 model, you might need to collect more data, but in this case you should also check that the turbidity sensor (the wider one), really is immersed enough in the liquid, otherwise the optics might "see" only air.
@@ -205,6 +205,7 @@ Despite above mentioned potential shortcomings, I was positively surprised that 
 
 In this project you've learned how to build a functioning ML project able to classify different liquids with a good or hopefully perfect accuracy. You are recommended to explore this more and take it a step further by adding more and different types of sensors, and especially try to find use cases where this type of technology can make a difference.
 
+![](Images/Tongue_inferencing2.gif)
 
 ### *Attributions*
 
