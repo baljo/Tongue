@@ -53,7 +53,7 @@ A lot of people are unfortunately suffering from partial or complete anosmia (lo
     - [Tongue bottom](https://github.com/baljo/Tongue/blob/main/3D%20Model/STL-files/Tongue_bottom.stl)
 - I used TPU-filament (from CCTree) for the first time and was surprised that it worked without issues on my budget Bowden-tube equipped 3D-printer. I did though not dare to go full speed (100 mm/s), instead used a moderate 50 mm/s, and a temperature of 220 °C. Print with high quality, I chose the max quality of 100 microns (0.1 mm), which made the printer working for hours with each part. 
 - No support is needed, a brim or raft is though recommended. TPU-filament sticks better to the print bed than PLA, so a heated bed is probably not necessary, my printer is anyhow not having one.
-- The "tongue" is split in two parts, the bottom part is not strictly needed, but provides some protection when the equipment is not in use.
+- The "tongue" is split in two parts, the bottom part is not strictly needed, but provides some protection when the equipment is not in use, and makes it look more like a real tongue! If you are printing with very flexible TPU-material, you might want to make the bottom part a tad thicker than in the design files.
 
 ![](Images/IMG_3242_resized.jpg)
 
@@ -81,25 +81,89 @@ To collect data using Edge Impulse, there's only a few steps to take:
  names with ',':`, type `TDS, Turbidity` as these are the sensor labels used in the program.
     - More info about how the data forwarder works can be found [here](https://docs.edgeimpulse.com/docs/edge-impulse-cli/cli-data-forwarder).
 
-**Collect data**
-- Head over to Edge Impulse, create a project if not already done, and go to `Data acquisition`
+**Collect Data**
+- Head over to Edge Impulse, create a project if not already done so, and go to `Data acquisition`
 ![](Images/EI-02.jpg)
 - Your device should now be visible on the right side.
 - Use a sample length of 10000 ms (= 10 seconds), the frequency is automatically 5 Hz as you forced it to be in the preparation steps.
 - The first label you should record data for is `air` that is, do not immerse the sensors in any liquid, just keep them in the air.
     - It is often necessary to have a label that serves as *other* or *background*. In this case the label `air` is even "hard coded" in the program, but the program will technically work fine even if you don't use `air` as label.
-- Click on `Start sampling` to collect data, I collected roughly 6 minutes of data for each label, but I recommend you start with a minute or so for each label.
+- Click on `Start sampling` to collect data, I collected roughly 6 minutes of data for each label, but I recommend you start with a minute or so for each label. Machine learning is most often an iterative process, so start small and adjust if needed.
 - When collecting data from liquids, ensure the sensors are immersed deep enough.
     - Check the animation in the beginning of this tutorial, the liquids are very close to the glass rims.
+    - Name the liquids, preferably with a shortish label as they will be displayed on the WIO Terminal later.
+    - Try to collect roughly same amount of data for each liquid.
+
+**Important**
+- You want to put aside some of the data samples as test data that will be used later. Depending on how you are collecting data, this will happen automatically or not. If the pie chart at the top shows 100%/0% as Train/Test split, you'll need to manually intervene. One way is to separately click on `Test` in the `Dataset` section and collect data there, but especially the first time it is easier to select ´Dashboard`, scroll down and then click `Perform train/test split`. This will create an ideal split of 80%/20%.
 
 
+*Next we need to describe to a reader and demonstrate how data is collected.  Depending upon the type of the project, this might be done directly in the Edge Impulse Studio, via the use of a 3rd-party dataset, or data could be collected out in the field and later uploaded / ingested to Edge Impulse.  Data being captured should be explained, the specific process to capture it should be documented, and the loading of the data into Edge Impulse should be articulated as well.  Images will be helpful here, showing the device capturing data, or if you are making use of a pre-made dataset then you will need to describe where you acquired it, how you prepared the dataset for Edge Impulse, and what your upload process entails.  Pictures of the data capture and/or screenshots of loading the data will be needed.*
+
+# Training and Building the Model
+
+After collecting some data you are now ready to build and train a ML model:
+
+**Create an Impulse and Generate Features**
+- Select `Create impulse` from the menu, set the Window size to 2000 ms, Window increase to 500 ms, and frequency to 5 Hz.
+- Select `Raw Data` as `Processing block` and `Classification` as `Learning block`
+- Click `Save impulse`
+
+    ![](Images/EI-04.jpg)
+
+- Select `Raw data` from the menu
+- Click `Generate features`
+    - After a while you'll see a graphical representation in the Feature explorer at the right. The more separated the classes are, the easier it will be for the model to classify. In this case the exact same liquid concentrations were used for each sample, this explains the nice separations. In most real cases though, the concentrations will to some degree vary from time to time, e.g. you probably never manage to brew tea with exactly same strength every time.
 
 
-Next we need to describe to a reader and demonstrate how data is collected.  Depending upon the type of the project, this might be done directly in the Edge Impulse Studio, via the use of a 3rd-party dataset, or data could be collected out in the field and later uploaded / ingested to Edge Impulse.  Data being captured should be explained, the specific process to capture it should be documented, and the loading of the data into Edge Impulse should be articulated as well.  Images will be helpful here, showing the device capturing data, or if you are making use of a pre-made dataset then you will need to describe where you acquired it, how you prepared the dataset for Edge Impulse, and what your upload process entails.  Pictures of the data capture and/or screenshots of loading the data will be needed.
+    ![](Images/EI-06.jpg)
+
+**Train the Model**
+
+- Select `Classifier` from the menu
+- Change the settings as in the picture, most important changes are the Dense layers and the Dropout rate, but feel free to play around with other settings.
+- The unoptimized float32 model will with these settings be very tiny, so there's no need to profile an quantized int8 model.
+- Click on `Start training`, unless you have lots of data and/or a very huge neural network, the training will in this case take just a few minutes.
+- Depending on your data quality/quantity and your model settings, you might or might not achieve a satisfying accuracy.
+    - If you get a very poor accuracy with the unoptimized float32 model, you might need to collect more data, but in this case you should also check that the turbidity sensor (the wider one), really is immersed enough in the liquid, otherwise the optics might "see" only air.
+    - After you have collected new data, click on `Retrain model`. This way you don't need to yourself generate new features.
+
+    ![](Images/EI-08.jpg)
+
+**Test the Model**
+
+For a dry test (literally dry in this case !), you will utilize test data that the ML model has not seen before. This will be as close to testing in real life as it can get.
+
+- Select `Model testing` and click `Classify all`.
+- Again you'll need to wait for a short while before seeing how the model performs on unseen data. Often the accuracy might be slightly worse than in the training phase, but sometimes it might even be better. The final truth will though be revealed first during wet testing.
+- If the accuracy is much worse than in the training phase, the reason is often that the model is overfitting i.e., it models the training data too well and is not able to generalize.
+    - In this case it might help to make the model less complex (reduce amount of neurons), increase the dropout rate, or if you have just a few data samples, collect more data.
+
+
+    ![](Images/EI-10.jpg)
+
+# Model Deployment
+
+When you are ready to test the model in real life, in this case with WIO Terminal, Edge Impulse has made it very easy for you:
+
+- Select `Deployment` from the menu
+- Select `Arduino library`
+- Select `Unoptimized (float32)`, and click `Build`
+- After a few minutes a window will pop up, showing you how to include the Arduino library into your own code.
+    - In this case, you should again open the file `Tongue.ino` in Arduino IDE, include the new library as instructed, and then replace `<Tongue_inferencing.h>` with your own library's header file. If you named your project e.g. `Liquids` in Edge Impulse, you'd put `<Liquids.h>` here.
+```
+/* Includes ---------------------------------------------------------------- */
+#include <Tongue_inferencing.h> // <<===============--------------------------- REPLACE this with your own library's header file
+#include <SparkFunBQ27441.h>   // to read battery info
+#include "seeed_line_chart.h"  //include the line chart library
+#include "TFT_eSPI.h"
+```
+
+![](Images/EI-12.jpg)
 
 
 ### Attributions
-The tongue is an adaption from this [3D-file](https://www.thingiverse.com/thing:644879) found at Thingiverse. All 3D-files I've created are licensed similarly as the original creator's (Attribution-ShareAlike 3.0 Unported/CC BY-SA 3.0).
+The tongue 3D-design is an adaptation from this [3D-file](https://www.thingiverse.com/thing:644879) found at Thingiverse. All 3D-files I've created are licensed similarly as the original creator's (Attribution-ShareAlike 3.0 Unported/CC BY-SA 3.0).
 
 # Intro / Overview
 Briefly provide an introduction to your project. Address the following: what you are accomplishing, what the intended outcome is, highlight the use-case, describe the reasons for undertaking this project, and give a high level overview of the build. Provide a sentence or two for each of these aspects.  

@@ -15,7 +15,7 @@
  */
 
 /* Includes ---------------------------------------------------------------- */
-#include <Tongue_inferencing.h>
+#include <Tongue_inferencing.h> // <<===============--------------------------- REPLACE this with your own library's header file
 #include <SparkFunBQ27441.h>   // to read battery info
 #include "seeed_line_chart.h"  //include the line chart library
 #include "TFT_eSPI.h"
