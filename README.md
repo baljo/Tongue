@@ -63,13 +63,37 @@ A lot of people are unfortunately suffering from partial or complete anosmia (lo
 To be able to gather data, and later to test the setup in practice, you need to prepare the WIO Terminal:
 - follow the steps in this [tutorial](https://wiki.seeedstudio.com/Wio-Terminal-TinyML-EI-1/)
 - add following libraries through the Arduino IDE via `Sketch > Include Library > Add .ZIP library`:
-    - [ei-tongue-arduino-1.0.2.zip]()
+    - [ei-tongue-arduino-1.0.2.zip](https://github.com/baljo/Tongue/blob/main/ei-tongue-arduino-1.0.2.zip)
+    - If using the battery chassis, and you want to see the battery status: [SparkFun BQ27441-G1A LiPo Fuel Gauge Arduino Library](https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library/tree/master) 
+    - Visit [Seeed_Arduino_Linechart](https://github.com/Seeed-Studio/Seeed_Arduino_Linechart) and download the entire repo to your local drive. Then add the .ZIP-file as above
 
 # Data Collection Process
 
 To collect data using Edge Impulse, there's only a few steps to take:
-- Upload the 
-- Use the [data forwarder](https://docs.edgeimpulse.com/docs/edge-impulse-cli/cli-data-forwarder), force the frequency to be 5 Hz by `edge-impulse-data-forwarder --frequency 5`
+
+**Preparations**
+- Find at least two liquids, e.g. tap water and sea water. Do not use any liquids that might damage the sensors like oil, acids, or very corrosive liquids. 
+    - After you have immersed the sensors in a liquid, rinse them carefully with water and wipe them dry. 
+- Upload the main program [Tongue.ino](https://github.com/baljo/Tongue/blob/main/Tongue.ino) to your WIO Terminal
+    - This program is used both for collecting data, and later for inferencing. The program writes sensor data to the terminal which will be collected by the data forwarder in next step.
+- Use the Edge Impulse [data forwarder](https://docs.edgeimpulse.com/docs/edge-impulse-cli/cli-data-forwarder), force the frequency to be 5 Hz by `edge-impulse-data-forwarder --frequency 5`
+    - When you see this message `2 sensor axes detected (example values: [3,1.79]). What do you want to call them? Separate the
+ names with ',':`, type `TDS, Turbidity` as these are the sensor labels used in the program.
+    - More info about how the data forwarder works can be found [here](https://docs.edgeimpulse.com/docs/edge-impulse-cli/cli-data-forwarder).
+
+**Collect data**
+- Head over to Edge Impulse, create a project if not already done, and go to `Data acquisition`
+![](Images/EI-02.jpg)
+- Your device should now be visible on the right side.
+- Use a sample length of 10000 ms (= 10 seconds), the frequency is automatically 5 Hz as you forced it to be in the preparation steps.
+- The first label you should record data for is `air` that is, do not immerse the sensors in any liquid, just keep them in the air.
+    - It is often necessary to have a label that serves as *other* or *background*. In this case the label `air` is even "hard coded" in the program, but the program will technically work fine even if you don't use `air` as label.
+- Click on `Start sampling` to collect data, I collected roughly 6 minutes of data for each label, but I recommend you start with a minute or so for each label.
+- When collecting data from liquids, ensure the sensors are immersed deep enough.
+    - Check the animation in the beginning of this tutorial, the liquids are very close to the glass rims.
+
+
+
 
 Next we need to describe to a reader and demonstrate how data is collected.  Depending upon the type of the project, this might be done directly in the Edge Impulse Studio, via the use of a 3rd-party dataset, or data could be collected out in the field and later uploaded / ingested to Edge Impulse.  Data being captured should be explained, the specific process to capture it should be documented, and the loading of the data into Edge Impulse should be articulated as well.  Images will be helpful here, showing the device capturing data, or if you are making use of a pre-made dataset then you will need to describe where you acquired it, how you prepared the dataset for Edge Impulse, and what your upload process entails.  Pictures of the data capture and/or screenshots of loading the data will be needed.
 
