@@ -13,7 +13,7 @@ A lot of people are unfortunately suffering from partial or complete anosmia (lo
 
 
 
-Here we will go deeper into the problem that is being addressed.  We’ll want to provide evidence and data that the problem exists, and provide some possible improved outcomes and what we are hoping to achieve.  We need to establish credibility and demonstrate competence and innovation, so that readers have trust in the solution being presented.  This could be a good place to also further document the hardware features, sensors, or interfaces available on the board, describe what they do or what data they are intended to capture, and why that is important.  An image further detailing the problem or challenge would be useful, but might not be required depending upon the project.
+*Here we will go deeper into the problem that is being addressed.  We’ll want to provide evidence and data that the problem exists, and provide some possible improved outcomes and what we are hoping to achieve.  We need to establish credibility and demonstrate competence and innovation, so that readers have trust in the solution being presented.  This could be a good place to also further document the hardware features, sensors, or interfaces available on the board, describe what they do or what data they are intended to capture, and why that is important.  An image further detailing the problem or challenge would be useful, but might not be required depending upon the project.*
 
 ![](Images/Tongue_03_3212.jpg)
 
@@ -55,11 +55,24 @@ Here we will go deeper into the problem that is being addressed.  We’ll want t
 - No support is needed, a brim or raft is though recommended. TPU-filament sticks better to the print bed than PLA, so a heated bed is probably not necessary, my printer is anyhow not having one.
 - The "tongue" is split in two parts, the bottom part is not strictly needed, but provides some protection when the equipment is not in use.
 
-
-
 ![](Images/IMG_3242_resized.jpg)
 
 ![](Images/Tongue_3D_rendering.png)
+
+## Installing Software
+To be able to gather data, and later to test the setup in practice, you need to prepare the WIO Terminal:
+- follow the steps in this [tutorial](https://wiki.seeedstudio.com/Wio-Terminal-TinyML-EI-1/)
+- add following libraries through the Arduino IDE via `Sketch > Include Library > Add .ZIP library`:
+    - [ei-tongue-arduino-1.0.2.zip]()
+
+# Data Collection Process
+
+To collect data using Edge Impulse, there's only a few steps to take:
+- Upload the 
+- Use the [data forwarder](https://docs.edgeimpulse.com/docs/edge-impulse-cli/cli-data-forwarder), force the frequency to be 5 Hz by `edge-impulse-data-forwarder --frequency 5`
+
+Next we need to describe to a reader and demonstrate how data is collected.  Depending upon the type of the project, this might be done directly in the Edge Impulse Studio, via the use of a 3rd-party dataset, or data could be collected out in the field and later uploaded / ingested to Edge Impulse.  Data being captured should be explained, the specific process to capture it should be documented, and the loading of the data into Edge Impulse should be articulated as well.  Images will be helpful here, showing the device capturing data, or if you are making use of a pre-made dataset then you will need to describe where you acquired it, how you prepared the dataset for Edge Impulse, and what your upload process entails.  Pictures of the data capture and/or screenshots of loading the data will be needed.
+
 
 ### Attributions
 The tongue is an adaption from this [3D-file](https://www.thingiverse.com/thing:644879) found at Thingiverse. All 3D-files I've created are licensed similarly as the original creator's (Attribution-ShareAlike 3.0 Unported/CC BY-SA 3.0).
