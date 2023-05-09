@@ -2,18 +2,39 @@
 
 # Introduction
 
-Inspired by how Benjamin Cabé's amazing [artificial nose](https://blog.benjamin-cabe.com/2021/08/03/how-i-built-a-connected-artificial-nose) can recognize different scents, I thought it would be interesting to find out if it was possible to simulate the tastebuds of a human tongue to detect different types of - more or less - drinkable liquids. This tutorial shows how low-cost water quality sensors, together with WIO Terminal, were used to successfully detect five different liquids with help of TinyML (tiny Machine Learning).
+Inspired by how Benjamin Cabé's amazing [artificial nose](https://blog.benjamin-cabe.com/2021/08/03/how-i-built-a-connected-artificial-nose) can recognize different scents, I thought it would be interesting to find out if it was possible to simulate the tastebuds of a human tongue to detect different types of - more or less - drinkable liquids. This tutorial shows how low-cost water quality sensors, together with WIO Terminal, were used to successfully detect five different liquids with help of TinyML (Tiny Machine Learning).
   
 ![](Images/Tongue_inferencing.gif)
 
 
 # Use-case Explanation
 
-A lot of people are unfortunately suffering from partial or complete anosmia (loss of smell) and ageusia (loss of taste). The reasons for the loss vary, but especially during the last few years Covid-19 has been recoqnized as one significant contributor. While most of the people having suffered through Covid-19 or other respitarory illnesses eventually fully recover their taste and smell capabilities, [one study](https://www.bmj.com/company/newsroom/millions-of-covid-patients-may-have-long-term-smell-and-taste-problems/#:~:text=They%20found%20that%20smell%20loss,of%20patients%20reported%20taste%20recovery) reports that approximately 5 % of patients having recovered from Covid-19 have a persisting loss of smell and/or taste a long time after.
+This project belongs mainly to basic research and thus I don't have a real problem to solve. However, many ideas have popped up for how the learnings from this project could be taken further for real use:
+- Use in olfactory (smell and taste) training for patients suffering from loss of smell and taste (see *below)
+- Use in wine tasting, for this an additional pH sensor is probably needed
+- Use in water quality verification, e.g. for waste water treatment 
 
 
+**A lot of people are unfortunately suffering from partial or complete anosmia (loss of smell) and ageusia (loss of taste). The reasons for the loss vary, but especially during the last few years Covid-19 has been recoqnized as one significant contributor. While most of the people having suffered through Covid-19 or other respitarory illnesses eventually fully recover their taste and smell capabilities, [one study](https://www.bmj.com/company/newsroom/millions-of-covid-patients-may-have-long-term-smell-and-taste-problems/#:~:text=They%20found%20that%20smell%20loss,of%20patients%20reported%20taste%20recovery) reports that approximately 5 % of patients having recovered from Covid-19 have a persisting loss of smell and/or taste a long time after.*
 
-*Here we will go deeper into the problem that is being addressed.  We’ll want to provide evidence and data that the problem exists, and provide some possible improved outcomes and what we are hoping to achieve.  We need to establish credibility and demonstrate competence and innovation, so that readers have trust in the solution being presented.  This could be a good place to also further document the hardware features, sensors, or interfaces available on the board, describe what they do or what data they are intended to capture, and why that is important.  An image further detailing the problem or challenge would be useful, but might not be required depending upon the project.*
+## Sensors Used in this Project
+
+The two sensors that are used in this project are (see next chapter for further links):
+- Grove TDS Sensor
+- Grove Turbidity Sensor
+
+**What is TDS and why should you care**
+
+TDS = Total Dissolved Solids, is a measure of the dissolved combined content of all inorganic and organic substances present in water. Typically, the higher the TDS value, the more substances dissolved in water. Hence, higher levels of Total Dissolved Solids (TDS) can indicate that water has more contaminants that can pose health risks. *(Source [Seeedstudio](https://www.seeedstudio.com/Grove-TDS-Sensor-p-4400.html?queryID=8b51e6082631abe27d9dc97a983936bc&objectID=4400&indexName=bazaar_retailer_products))*
+
+![](Images/TDS-levels.png)
+
+**What is turbidity**
+
+The Grove turbidity sensor can measure the turbidity of the water (the number of suspended particles).
+
+The optical sensor of this module can measure the density of turbid water and the concentration of extraneous matter using the refraction of wavelength between photo transistor and diode. By using an optical transistor and optical diodes, an optical sensor measures the amount of light coming from the source of the light to the light receiver, in order to calculate turbidity of water. *(Source [Seeedstudio](https://wiki.seeedstudio.com/Grove-Turbidity-Sensor-Meter-for-Arduino-V1.0/))*
+
 
 ![](Images/Tongue_03_3212.jpg)
 
@@ -61,11 +82,12 @@ A lot of people are unfortunately suffering from partial or complete anosmia (lo
 
 ## Installing Software
 To be able to gather data, and later to test the setup in practice, you need to prepare the WIO Terminal:
-- follow the steps in this [tutorial](https://wiki.seeedstudio.com/Wio-Terminal-TinyML-EI-1/)
-- add following libraries through the Arduino IDE via `Sketch > Include Library > Add .ZIP library`:
+- Follow the steps in this [tutorial](https://wiki.seeedstudio.com/Wio-Terminal-TinyML-EI-1/)
+- Add following libraries through the Arduino IDE via `Sketch > Include Library > Add .ZIP library`:
     - [ei-tongue-arduino-1.0.2.zip](https://github.com/baljo/Tongue/blob/main/ei-tongue-arduino-1.0.2.zip)
     - If using the battery chassis, and you want to see the battery status: [SparkFun BQ27441-G1A LiPo Fuel Gauge Arduino Library](https://github.com/sparkfun/SparkFun_BQ27441_Arduino_Library/tree/master) 
     - Visit [Seeed_Arduino_Linechart](https://github.com/Seeed-Studio/Seeed_Arduino_Linechart) and download the entire repo to your local drive. Then add the .ZIP-file as above
+
 
 # Data Collection Process
 
@@ -74,7 +96,7 @@ To collect data using Edge Impulse, there's only a few steps to take:
 **Preparations**
 - Find at least two liquids, e.g. tap water and sea water. Do not use any liquids that might damage the sensors like oil, acids, or very corrosive liquids. 
     - After you have immersed the sensors in a liquid, rinse them carefully with water and wipe them dry. 
-- Upload the main program [Tongue.ino](https://github.com/baljo/Tongue/blob/main/Tongue.ino) to your WIO Terminal
+- Compile and upload the main program [Tongue.ino](https://github.com/baljo/Tongue/blob/main/Tongue.ino) to your WIO Terminal
     - This program is used both for collecting data, and later for inferencing. The program writes sensor data to the terminal which will be collected by the data forwarder in next step.
 - Use the Edge Impulse [data forwarder](https://docs.edgeimpulse.com/docs/edge-impulse-cli/cli-data-forwarder), force the frequency to be 5 Hz by `edge-impulse-data-forwarder --frequency 5`
     - When you see this message `2 sensor axes detected (example values: [3,1.79]). What do you want to call them? Separate the
@@ -97,8 +119,6 @@ To collect data using Edge Impulse, there's only a few steps to take:
 **Important**
 - You want to put aside some of the data samples as test data that will be used later. Depending on how you are collecting data, this will happen automatically or not. If the pie chart at the top shows 100%/0% as Train/Test split, you'll need to manually intervene. One way is to separately click on `Test` in the `Dataset` section and collect data there, but especially the first time it is easier to select ´Dashboard`, scroll down and then click `Perform train/test split`. This will create an ideal split of 80%/20%.
 
-
-*Next we need to describe to a reader and demonstrate how data is collected.  Depending upon the type of the project, this might be done directly in the Edge Impulse Studio, via the use of a 3rd-party dataset, or data could be collected out in the field and later uploaded / ingested to Edge Impulse.  Data being captured should be explained, the specific process to capture it should be documented, and the loading of the data into Edge Impulse should be articulated as well.  Images will be helpful here, showing the device capturing data, or if you are making use of a pre-made dataset then you will need to describe where you acquired it, how you prepared the dataset for Edge Impulse, and what your upload process entails.  Pictures of the data capture and/or screenshots of loading the data will be needed.*
 
 # Training and Building the Model
 
@@ -123,6 +143,7 @@ After collecting some data you are now ready to build and train a ML model:
 - Select `Classifier` from the menu
 - Change the settings as in the picture, most important changes are the Dense layers and the Dropout rate, but feel free to play around with other settings.
 - The unoptimized float32 model will with these settings be very tiny, so there's no need to profile an quantized int8 model.
+    - In my case the int8 accuracy has actually been extremely poor and useless, I haven't though investigated why as the float32 model works just fine.
 - Click on `Start training`, unless you have lots of data and/or a very huge neural network, the training will in this case take just a few minutes.
 - Depending on your data quality/quantity and your model settings, you might or might not achieve a satisfying accuracy.
     - If you get a very poor accuracy with the unoptimized float32 model, you might need to collect more data, but in this case you should also check that the turbidity sensor (the wider one), really is immersed enough in the liquid, otherwise the optics might "see" only air.
@@ -142,14 +163,17 @@ For a dry test (literally dry in this case !), you will utilize test data that t
 
     ![](Images/EI-10.jpg)
 
-# Model Deployment
+# Model Deployment (Wet Testing)
 
-When you are ready to test the model in real life, in this case with WIO Terminal, Edge Impulse has made it very easy for you:
+When you are ready to test the model in real life, in this case with WIO Terminal, Edge Impulse has again made it very easy for you:
 
 - Select `Deployment` from the menu
 - Select `Arduino library`
 - Select `Unoptimized (float32)`, and click `Build`
-- After a few minutes a window will pop up, showing you how to include the Arduino library into your own code.
+
+![](Images/EI-12.jpg)
+
+- After a few minutes, a window will pop up, showing you how to include the Arduino library into your own code.
     - In this case, you should again open the file `Tongue.ino` in Arduino IDE, include the new library as instructed, and then replace `<Tongue_inferencing.h>` with your own library's header file. If you named your project e.g. `Liquids` in Edge Impulse, you'd put `<Liquids.h>` here.
 ```
 /* Includes ---------------------------------------------------------------- */
@@ -158,35 +182,30 @@ When you are ready to test the model in real life, in this case with WIO Termina
 #include "seeed_line_chart.h"  //include the line chart library
 #include "TFT_eSPI.h"
 ```
+- Finally compile and upload the program to WIO Terminal. 
+    - If everything works you should on the device itself see a line chart with slightly varying data
+    - The sensor data is also shown in the Arduino IDE terminal window
 
-![](Images/EI-12.jpg)
-
-
-### Attributions
-The tongue 3D-design is an adaptation from this [3D-file](https://www.thingiverse.com/thing:644879) found at Thingiverse. All 3D-files I've created are licensed similarly as the original creator's (Attribution-ShareAlike 3.0 Unported/CC BY-SA 3.0).
-
-# Intro / Overview
-Briefly provide an introduction to your project. Address the following: what you are accomplishing, what the intended outcome is, highlight the use-case, describe the reasons for undertaking this project, and give a high level overview of the build. Provide a sentence or two for each of these aspects.  
-Summarize the problem you are addressing in one or two sentences, and how your solution makes an impact.  Be sure to also give a brief introduction to the hardware you have chosen and any key features, or reasons why the selected hardware is a good fit for your project. 
-Include a high-quality image of the hardware.
-
-# Problem Being Solved / Use-case Explanation
-Here we will go deeper into the problem that is being addressed.  We’ll want to provide evidence and data that the problem exists, and provide some possible improved outcomes and what we are hoping to achieve.  We need to establish credibility and demonstrate competence and innovation, so that readers have trust in the solution being presented.  This could be a good place to also further document the hardware features, sensors, or interfaces available on the board, describe what they do or what data they are intended to capture, and why that is important.  An image further detailing the problem or challenge would be useful, but might not be required depending upon the project.
-
-# Components and Hardware Configuration
-If any additional components are needed to build the project, include a list / Bill of Materials.  Normally this is formatted in a bulleted list, and quantity needed, to build the project.  After that, a description of how to set up the hardware, attach any sensors or secondary devices, flash any firmware or operating systems, install needed applications, and ultimately reach a point where we’re ready for Edge Impulse in the project.  We’ll definitely want some pictures of the hardware build process, showing the journey and setup that will guide readers through the process.
-
-# Data Collection Process
-Next we need to describe to a reader and demonstrate how data is collected.  Depending upon the type of the project, this might be done directly in the Edge Impulse Studio, via the use of a 3rd-party dataset, or data could be collected out in the field and later uploaded / ingested to Edge Impulse.  Data being captured should be explained, the specific process to capture it should be documented, and the loading of the data into Edge Impulse should be articulated as well.  Images will be helpful here, showing the device capturing data, or if you are making use of a pre-made dataset then you will need to describe where you acquired it, how you prepared the dataset for Edge Impulse, and what your upload process entails.  Pictures of the data capture and/or screenshots of loading the data will be needed.
-
-# Training and Building the Model
-Similar to the Data Collection Process section, a thorough description of the process used to build and train a model is important, so that readers can follow along and replicate your work.  Describe the elements in the Studio, the actions you take, and why.  Talk about the need for Training and Testing data, and when creating an Impulse,  Processing and Learning block options, Feature generation, and algorithm selection (FOMO, MobileNet, Yolo, etc) available to train and build the model.  Explain the selections you make, and the reasoning behind your choices.  Again images should be used here, screenshots walking a user through the process are very helpful.
-
-# Model Deployment
-Go into detail about the process of getting your resulting model into your application and onto your hardware.  This will of course vary by the target hardware, but explain what is occurring and how to flash your firmware, import the model if it’s a Linux device, or include a Library directly in your application.  Again describe the options presented to a user, and explain why you make the selections you do.  A few screenshots of the process would be useful.
+**Notes about the `Tongue.ino` program:**
+- It finds the maximum classification value and takes that as the final prediction
+- It is not using any uncertainty threshold i.e., it will classify everything it senses into one of the classes. Feel free to add uncertainty classification code into the Arduino program if you see a need for it, you only need to compare the classification value to a given uncertainty percentage threshold, e.g. 60 %.
 
 # Results
-Now it is time to show the finished project, deployed and running on the device.  Let’s talk about the results of running the model, presenting data, evidence, or statistics as appropriate.  Not all projects may meet their objectives, or perform well, but we should still present the outcomes truthfully.  If the project was extremely successful, then we can articulate on how the project could be scaled to truly make an impact.  If the project fell short of its goal, that is fine as well, and we can discuss what might have gone wrong, how the project could be improved, and provide lessons learned.  Screenshots or images might be needed here, as well.  
+The first results I got when testing the model in wet conditions were very mixed. Sometimes the model could always classify a liquid correctly, sometimes it completely failed. As I suspected I had not initially paid attention to having the turbidity sensor at proper and consistent depth, I started over from scratch by filling all glasses almost to the rims before data collection. This seems to have been the resolution to the problem as the model now works 100 % correctly. Again, this shows that machine learning as a paradigm is often an iterative process and it's better to start with a smaller amount of data, build and test a ML model, and then adjust if needed. 
+
+As mentioned earlier, the quantized int8 model performs extremely poorly and is useless. This is interesting as the unoptimized float32 model has a 100 % accuracy both in theory as well as in practice. I've not investigated this further, but would be interested in learning why this huge discrepancy occurs, and how to correct it.
+
+![](Images/EI-14.jpg)
+
+In addition, I have not tested the model with different concentrations, and suspect it might struggle with very diluted liquids. To overcome this potential issue, one would need to collect data from liquids with different dilutations and retrain the model. Do also note that there most probably are completely different liquids that happen to have same characteristics as measured by the two sensors used. When both sensors measure similar values, even from completely different liquids, the liquids will from the model point of view be one and the same. This problem can be overcome by using "sensor fusion" that is, adding more or different type of sensors like e.g. gas sensors for scenting. With WIO Terminal and Grove-components this should actually be quite easy to do.
+
+Despite above mentioned potential shortcomings, I was positively surprised that the model as such worked perfectly and consistently.
 
 # Conclusion
-A brief summary recapping what you built, why, and the outcome you achieved.  A few sentences wrapping up the project, any next steps you might take, or giving advice to the reader on how they can take your project and replicate it as-is, iterate, expand, or even scale your work.  All Expert Projects should be Public Projects, so explain that a reader can Clone your work and has access to your data, model, and can review the steps you took.  Reinforce the human health or machine health use case, and provide any final links or attribution.  
+
+In this project you've learned how to build a functioning ML project able to classify different liquids with a good or hopefully perfect accuracy. You are recommended to explore this more and take it a step further by adding more and different types of sensors, and especially try to find use cases where this type of technology can make a difference.
+
+
+### *Attributions*
+
+*The tongue 3D-design is an adaptation from this [3D-file](https://www.thingiverse.com/thing:644879) found at Thingiverse. All 3D-files I've created are licensed similarly as the original creator's (Attribution-ShareAlike 3.0 Unported/CC BY-SA 3.0).*
